@@ -396,6 +396,15 @@ Dock detection for STANDBY/UNKNOWN uses multiple signals: `dock_sub_state==1`,
 | 13    | Cleaned area (cm²; 18000 = 1.8m²) |
 | 15    | Unknown (600 during cleaning)      |
 
+On the Freo X Plus, field 1 is progress (float32 %), field 2 the cleaned area
+(float32), and field 5 is repeated: the task's rooms in cleaning order, each
+`{1: room_id}`. Once the robot starts a room, that entry gains field 4 (seen:
+1, later 2 when finished or abandoned), so the current room is the last entry
+with field 4. Example while cleaning the hallway (room 8) of a
+kitchen, bathroom, hallway, toilet run:
+`[{1:5, 4:2}, {1:6, 4:1}, {1:8, 4:1}, {1:4}]`. A single-room task never
+sets field 4; its entry only gained `{2: 1}` when the room was done.
+
 ### 5.4 Battery Decoding
 
 Battery is field 2 of base_status, wire type 5 (fixed32). The raw uint32
